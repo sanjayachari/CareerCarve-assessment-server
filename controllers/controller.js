@@ -65,7 +65,7 @@ const login = async (req, res) => {
     const hashedPassword = await bcrypt.compare(password, user.password);
     console.log("hashedPassword", hashedPassword);
     if (hashedPassword) {
-      const jwtSign = jwt.sign({ user }, "san");
+      const jwtSign = jwt.sign({ user }, "san", {expiresIn : 60 * 60});
       res.cookie("token", jwtSign, {
         httpOnly: true,
         secure: true,
