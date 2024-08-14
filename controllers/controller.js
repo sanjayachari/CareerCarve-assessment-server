@@ -108,7 +108,7 @@ const register = async (req, res) => {
 const stripe = require("stripe")(
   "sk_test_51PiwzFDao70MZ3nrEdoit4vLz6UmkRlPCyO2LLGK4KzKzE1HZgkDi5T54qrLy96PAlwpzUgaCRnrTFUn7I4ep3KP00CRrNyCVR"
 );
-const YOUR_DOMAIN = "http://localhost:5173/dashboard";
+const YOUR_DOMAIN = "https://careercarve-assessment-client.onrender.com";
 
 const checkout = async (req, res) => {
   const { amount, id, studentId } = req.body; // Assuming amount is sent in INR
@@ -124,7 +124,7 @@ const checkout = async (req, res) => {
           price_data: {
             currency: "inr",
             product_data: {
-              name: `CARD : ------- 4242 4242 4242 4242 ------- MM/YY  : ------- 12/30 ------- CVV : ------- 123 -------`,
+              name: "CareerCarve",
             },
             // unit_amount: amountInPaise, // Now in paise
             unit_amount: amount * 100, // Now in paise
