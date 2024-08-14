@@ -67,10 +67,10 @@ const login = async (req, res) => {
     if (hashedPassword) {
       const jwtSign = jwt.sign({ user }, "san", {expiresIn : 60 * 60});
       res.cookie("token", jwtSign, {
-        httpOnly: true,
+        // httpOnly: true,
         secure: true,
         sameSite: "none",
-        maxAge: 3600000, // Expiration time in milliseconds
+        // maxAge: 3600000, // Expiration time in milliseconds
 
       });
       res.json(user);
