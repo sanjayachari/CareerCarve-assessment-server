@@ -66,7 +66,11 @@ const login = async (req, res) => {
     console.log("hashedPassword", hashedPassword);
     if (hashedPassword) {
       const jwtSign = jwt.sign({ user }, "san");
-      res.cookie("token", jwtSign);
+      res.cookie("token", jwtSign, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
       res.json(user);
     } else {
       return res.status(403).json({ message: "Wrong credentials" });
@@ -107,7 +111,7 @@ const stripe = require("stripe")(
 const YOUR_DOMAIN = "http://localhost:5173/dashboard";
 
 const checkout = async (req, res) => {
-  const { amount, id,studentId } = req.body; // Assuming amount is sent in INR
+  const { amount, id, studentId } = req.body; // Assuming amount is sent in INR
 
   try {
     // Convert amount to paise if it's not already in paise
@@ -162,52 +166,49 @@ const paymentStatus = async (req, res) => {
   try {
     const getProfile = await exportSchema.findOne({ _id: id });
     // getProfile.events(())
-    res.json(getProfile)
+    res.json(getProfile);
   } catch (error) {
-    console.log(error)
-    return res.status(403).json(error)
+    console.log(error);
+    return res.status(403).json(error);
   }
 };
 
-
 const getPaymentStatus = async (req, res) => {
-    const { id, studentId } = req.params;
+  const { id, studentId } = req.params;
 
-    try {
-        // Find the document by its ID
-        const updatePayment = await exportSchema.findById(id);
+  try {
+    // Find the document by its ID
+    const updatePayment = await exportSchema.findById(id);
 
-        if (!updatePayment) {
-            return res.status(404).json({ message: "Booking not found" });
-        }
-
-        // Find the specific event in the events array
-        const event = updatePayment.events.find((e) => e.studentId == studentId);
-
-        if (!event) {
-            return res.status(404).json({ message: "Event not found for the specified student" });
-        }
-
-        // Update the isPayment field to true
-        event.isPayment = true;
-
-        // Mark the 'events' array as modified
-        updatePayment.markModified('events');
-
-        // Save the updated document
-        await updatePayment.save();
-
-        // Respond with the updated document
-        res.json({event,updatePayment});
-
-    } catch (error) {
-        // Handle any errors that occur during the process
-        res.status(500).json({ message: "An error occurred", error });
+    if (!updatePayment) {
+      return res.status(404).json({ message: "Booking not found" });
     }
+
+    // Find the specific event in the events array
+    const event = updatePayment.events.find((e) => e.studentId == studentId);
+
+    if (!event) {
+      return res
+        .status(404)
+        .json({ message: "Event not found for the specified student" });
+    }
+
+    // Update the isPayment field to true
+    event.isPayment = true;
+
+    // Mark the 'events' array as modified
+    updatePayment.markModified("events");
+
+    // Save the updated document
+    await updatePayment.save();
+
+    // Respond with the updated document
+    res.json({ event, updatePayment });
+  } catch (error) {
+    // Handle any errors that occur during the process
+    res.status(500).json({ message: "An error occurred", error });
+  }
 };
-
-
-
 
 module.exports = {
   test,
